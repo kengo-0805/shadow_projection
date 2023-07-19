@@ -51,8 +51,8 @@ CHESS_VNUM = 10      # 垂直方向個数
 CHESS_MARGIN = 50    # [px]
 CHESS_BLOCKSIZE = 80 # [px]
 
-BOARD_WIDTH  = 0.33  # chessboard の横幅 [m]
-BOARD_HEIGHT = 0.45  # chessboard の縦幅 [m]
+BOARD_WIDTH  = 0.8  # chessboard の横幅 [m]
+BOARD_HEIGHT = 0.3  # chessboard の縦幅 [m]
 BOARD_X = 0.         # chessboard の3次元位置X座標 [m]（右手系）
 BOARD_Y = 0.         # chessboard の3次元位置Y座標 [m]（右手系）
 BOARD_Z = -3.0       # chessboard の3次元位置Z座標 [m]（右手系）[see]
@@ -84,8 +84,8 @@ chessboard_data = None
 
 # ボードの位置
 board_vertices = ((BOARD_X - BOARD_WIDTH / 2, BOARD_Y + BOARD_HEIGHT, BOARD_Z),
-                  (BOARD_X - BOARD_WIDTH / 2, BOARD_Y, BOARD_Z),
-                  (BOARD_X + BOARD_WIDTH / 2, BOARD_Y, BOARD_Z),
+                  (BOARD_X - BOARD_WIDTH / 2, BOARD_Y - BOARD_HEIGHT, BOARD_Z),
+                  (BOARD_X + BOARD_WIDTH / 2, BOARD_Y - BOARD_HEIGHT, BOARD_Z),
                   (BOARD_X + BOARD_WIDTH / 2, BOARD_Y + BOARD_HEIGHT, BOARD_Z))
 
 #===============================
@@ -172,32 +172,32 @@ def make_chessboard(num_h, num_v, margin, block_size):
 
     return chessboard
 
-def load_chessboard():
-    global chessboard_image, texture_ids
-
-    chessboard = make_chessboard(CHESS_HNUM, CHESS_VNUM, CHESS_MARGIN, CHESS_BLOCKSIZE)
-
-    filepath = os.path.join(DATA_DIRPATH, 'chessboard.png')
-    cv2.imwrite(filepath, chessboard)
-    chessboard_image = Image.open(filepath)
-    chessboard_image = Image.open("data/lenna.png")
-
-    tw, th = chessboard_image.width, chessboard_image.height
-    gl.glBindTexture(gl.GL_TEXTURE_2D, texture_ids[0])
-    gl.glTexImage2D(gl.GL_TEXTURE_2D, 0, gl.GL_RGB, tw, th, 0, gl.GL_RGB, gl.GL_UNSIGNED_BYTE, chessboard_image.tobytes())
-
-# def load_png():
+# def load_chessboard():
 #     global chessboard_image, texture_ids
 
 #     chessboard = make_chessboard(CHESS_HNUM, CHESS_VNUM, CHESS_MARGIN, CHESS_BLOCKSIZE)
 
 #     filepath = os.path.join(DATA_DIRPATH, 'lenna.png')
-#     cv2.imwrite(filepath, chessboard)
+#     # cv2.imwrite(filepath, chessboard)
 #     chessboard_image = Image.open(filepath)
 
 #     tw, th = chessboard_image.width, chessboard_image.height
 #     gl.glBindTexture(gl.GL_TEXTURE_2D, texture_ids[0])
 #     gl.glTexImage2D(gl.GL_TEXTURE_2D, 0, gl.GL_RGB, tw, th, 0, gl.GL_RGB, gl.GL_UNSIGNED_BYTE, chessboard_image.tobytes())
+
+def load_png():
+    global chessboard_image, texture_ids
+
+    chessboard = make_chessboard(CHESS_HNUM, CHESS_VNUM, CHESS_MARGIN, CHESS_BLOCKSIZE)
+
+    filepath = os.path.join(DATA_DIRPATH, 'back.jpg')
+    # cv2.imwrite(filepath, chessboard)
+    chessboard_image = Image.open(filepath)
+
+    tw, th = chessboard_image.width, chessboard_image.height
+    print(type(tw), tw)
+    gl.glBindTexture(gl.GL_TEXTURE_2D, texture_ids[0])
+    gl.glTexImage2D(gl.GL_TEXTURE_2D, 0, gl.GL_RGB, tw, th, 0, gl.GL_RGB, gl.GL_UNSIGNED_BYTE, chessboard_image.tobytes())
 
 
 #-------------------------------
@@ -238,7 +238,37 @@ def grid(size=1, n=10, width=1):
 
     batch.draw()
 
-def board():
+# def board():
+#     global chessboard_image, texture_ids
+
+#     gl.glMatrixMode(gl.GL_MODELVIEW)
+
+#     gl.glEnable(gl.GL_TEXTURE_2D)
+#     gl.glBindTexture(gl.GL_TEXTURE_2D, texture_ids[0])
+#     gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MIN_FILTER, gl.GL_NEAREST)
+#     gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MAG_FILTER, gl.GL_NEAREST)
+#     gl.glTexEnvi(gl.GL_TEXTURE_ENV, gl.GL_TEXTURE_ENV_MODE, gl.GL_REPLACE)
+
+#     gl.glMatrixMode(gl.GL_TEXTURE)
+#     gl.glPushMatrix()
+#     gl.glLoadIdentity()
+#     gl.glTranslatef(0.5 / chessboard_image.width, 0.5 / chessboard_image.height, 0)
+
+#     gl.glBegin(gl.GL_QUADS)
+#     gl.glTexCoord2i(0, 0)
+#     gl.glVertex3f(*board_vertices[0])
+#     gl.glTexCoord2i(0, 1)
+#     gl.glVertex3f(*board_vertices[1])
+#     gl.glTexCoord2i(1, 1)
+#     gl.glVertex3f(*board_vertices[2])
+#     gl.glTexCoord2i(1, 0)
+#     gl.glVertex3f(*board_vertices[3])
+#     gl.glEnd()
+#     gl.glPopMatrix()
+
+#     gl.glDisable(gl.GL_TEXTURE_2D)
+
+def board_test():
     global chessboard_image, texture_ids
 
     gl.glMatrixMode(gl.GL_MODELVIEW)
@@ -265,6 +295,7 @@ def board():
     gl.glVertex3f(*board_vertices[3])
     gl.glEnd()
     gl.glPopMatrix()
+    wolf_image.blit(1000, 1000)
 
     gl.glDisable(gl.GL_TEXTURE_2D)
 
@@ -437,7 +468,9 @@ def on_draw_impl():
 
     #====================================================
     if state.draw_board:
-        board()
+        # board()
+        board_test()
+        
 
     # カメラ座標軸の描画
     if state.draw_axes and any(state.mouse_btns):
@@ -452,6 +485,8 @@ def on_draw_impl():
         gl.glColor3f(0.25, 0.25, 0.25)
         axes()
     #====================================================
+
+wolf_image = pyglet.image.load("data/wolf.png")
 
 #-------------------------------
 # ここからがメイン部分
@@ -513,8 +548,9 @@ if __name__ == '__main__':
     #------------------------------
     # チェスボードの作成
     texture_ids = (pyglet.gl.GLuint * 1)()
-    gl.glGenTextures(1, texture_ids)
-    load_chessboard()
+    gl.glGenTextures(2, texture_ids)
+    # load_chessboard()
+    load_png()
 
     # Start
     pyglet.app.run()
