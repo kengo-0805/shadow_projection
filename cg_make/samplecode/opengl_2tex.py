@@ -54,13 +54,20 @@ texture2_x = 100
 texture2_y = 100
 
 # Create window
-window = pyglet.window.Window(WIDTH, HEIGHT, resizable=True)
+# Create window
+# window = pyglet.window.Window(WIDTH, HEIGHT, resizable=True)
+window = pyglet.window.Window(1920, 1080, resizable=True)
 
 @window.event
 def on_draw():
     window.clear()
 
     glEnable(GL_TEXTURE_2D)
+
+     # Enable blending for alpha channel
+    glEnable(GL_BLEND)
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+
 
     # Bind and draw texture1
     glBindTexture(GL_TEXTURE_2D, texture1_id)
@@ -93,8 +100,12 @@ def on_mouse_drag(x, y, dx, dy, buttons, modifiers):
     if buttons & pyglet.window.mouse.RIGHT:
         texture1_x += dx
         texture1_y += dy
+        # print("tex1_x:", texture1_x)
+        # print("tex1_y:", texture1_y)
     if buttons & pyglet.window.mouse.LEFT:
         texture2_x += dx
         texture2_y += dy
-
+        # print("tex2_x:", texture2_x)
+        # print("tex2_y:", texture2_y)
+# range for [0, 0]~[1010, 700]
 pyglet.app.run()
